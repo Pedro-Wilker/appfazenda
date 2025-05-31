@@ -2,6 +2,7 @@ export interface Farm {
   id: string;
   name: string;
   location: string;
+  type: 'milk' | 'eggs'; // Adicionado
 }
 
 export interface Weather {
@@ -25,4 +26,12 @@ export interface MilkProductionData {
 export interface BalanceData {
   label: string;
   value: number;
+}
+
+export interface PieChartData { // Adicionado
+  name: string;
+  value: number;
+  color: string;
+  legendFontColor: string;
+  legendFontSize: number;
 }

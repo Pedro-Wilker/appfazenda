@@ -1,15 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useFarmContext } from '../contexts/FarmContext';
 import { theme } from '../theme';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Animated, { FadeInRight } from 'react-native-reanimated';
 
 interface MilkProductionCardProps {
-  dailyProduction: number; // Litros/dia
-  monthlyProduction: number; // Litros/mês
-  earnings: number; // Ganhos (R$)
-  costs: number; // Custos (R$)
+  dailyProduction: number;
+  monthlyProduction: number;
+  earnings: number;
+  costs: number;
 }
 
 export default function MilkProductionCard({
@@ -18,22 +19,28 @@ export default function MilkProductionCard({
   earnings,
   costs,
 }: MilkProductionCardProps) {
+  const { selectedFarm } = useFarmContext();
+  const isMilk = selectedFarm?.type === 'milk';
+  const unit = isMilk ? 'L' : 'dúzias';
+
   return (
     <Animated.View entering={FadeInRight.duration(500).delay(200)} style={styles.container}>
       <LinearGradient
         colors={[theme.colors.gradientStart, theme.colors.gradientEnd]}
         style={styles.header}
       >
-        <Text style={styles.title}>Produção de Leite</Text>
+        <Text style={styles.title}>
+          {isMilk ? 'Produção de Leite' : 'Produção de Ovos'}
+        </Text>
       </LinearGradient>
       <View style={styles.content}>
         <View style={styles.section}>
           <Text style={styles.label}>Produção Hoje</Text>
-          <Text style={styles.value}>{dailyProduction} L</Text>
+          <Text style={styles.value}>{dailyProduction} {unit}</Text>
         </View>
         <View style={styles.section}>
           <Text style={styles.label}>Produção Mensal</Text>
-          <Text style={styles.value}>{monthlyProduction} L</Text>
+          <Text style={styles.value}>{monthlyProduction} {unit}</Text>
         </View>
         <View style={styles.section}>
           <Text style={styles.label}>Ganhos</Text>
@@ -53,8 +60,8 @@ const styles = StyleSheet.create({
     margin: theme.spacing.sm,
     borderRadius: theme.borderRadius.medium,
     backgroundColor: theme.colors.card,
-    boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.15)', // Web
-    elevation: 4, // Android
+    boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.15)',
+    elevation: 4,
     overflow: 'hidden',
     width: wp('92%'),
     alignSelf: 'center',
@@ -88,9 +95,9 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   earnings: {
-    color: theme.colors.primary, // Verde para ganhos
+    color: theme.colors.primary,
   },
   costs: {
-    color: theme.colors.accent, // Rosa para custos
+    color: theme.colors.accent,
   },
 });

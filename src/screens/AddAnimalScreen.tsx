@@ -1,0 +1,154 @@
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useFarmContext } from '../contexts/FarmContext';
+import { theme } from '../theme';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootTabParamList } from '../navigation/AppNavigator';
+
+interface Animal {
+  id: string;
+  name: string;
+  species: 'cow' | 'chicken';
+  farmId: string;
+}
+
+type NavigationProp = NativeStackNavigationProp<RootTabParamList>;
+
+export default function AddAnimalScreen() {
+  const { selectedFarm } = useFarmContext();
+  const navigation = useNavigation<NavigationProp>();
+  const [name, setName] = useState('');
+  const [species, setSpecies] = useState<'cow' | 'chicken'>('cow');
+
+  const handleSave = () => {
+    if (!name || !selectedFarm) {
+      Alert.alert('Erro', 'Nome do animal e fazenda são obrigatórios.');
+      return;
+    }
+
+    const newAnimal: Animal = {
+      id: Math.random().toString(36).substring(2),
+      name,
+      species,
+      farmId: selectedFarm.id,
+    };
+
+    // TODO: Salvar animal (futuro AnimalContext ou backend)
+    console.log('Novo animal:', newAnimal);
+    navigation.goBack();
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Adicionar Animal</Text>
+      <View style={styles.form}>
+        <Text style={styles.label}>Nome do Animal</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ex.: Mimosa"
+          value={name}
+          onChangeText={setName}
+        />
+        <Text style={styles.label}>Espécie</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={species}
+            onValueChange={(value) => setSpecies(value as 'cow' | 'chicken')}
+            style={styles.picker}
+          >
+            <Picker.Item label="Vaca" value="cow" />
+            <Picker.Item label="Galinha" value="chicken" />
+          </Picker>
+        </View>
+        <Text style={styles.label}>Fazenda</Text>
+        <TextInput
+          style={[styles.input, styles.disabledInput]}
+          value={selectedFarm?.name || 'Nenhuma fazenda selecionada'}
+          editable={false}
+        />
+      </View>
+      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+        <LinearGradient
+          colors={[theme.colors.gradientStart, theme.colors.gradientEnd]}
+          style={styles.gradientButton}
+        >
+          <Text style={styles.saveButtonText}>Salvar</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    padding: theme.spacing.sm,
+  },
+  title: {
+    ...theme.typography.title,
+    color: theme.colors.primary,
+    margin: theme.spacing.sm,
+    textAlign: 'center',
+  },
+  form: {
+    marginHorizontal: theme.spacing.sm,
+    gap: theme.spacing.sm,
+  },
+  label: {
+    ...theme.typography.subtitle,
+    color: theme.colors.text,
+  },
+  input: {
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.medium,
+    padding: theme.spacing.sm,
+    ...theme.typography.body,
+    color: theme.colors.text,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  disabledInput: {
+    backgroundColor: theme.colors.card,
+    color: theme.colors.textSecondary,
+  },
+  pickerContainer: {
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.medium,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    overflow: Platform.select({ web: 'hidden', default: 'visible' }),
+  },
+  picker: {
+    ...theme.typography.body,
+    color: theme.colors.text,
+    padding: theme.spacing.sm,
+  },
+  saveButton: {
+    margin: theme.spacing.sm,
+    borderRadius: theme.borderRadius.medium,
+    width: wp('92%'),
+    alignSelf: 'center',
+    overflow: 'hidden',
+  },
+  gradientButton: {
+    padding: theme.spacing.sm,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    ...theme.typography.subtitle,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+});

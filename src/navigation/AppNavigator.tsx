@@ -4,37 +4,83 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomeScreen from '../screens/HomeScreen';
 import FarmListScreen from '../screens/FarmListScreen';
+import AnimalListScreen from '../screens/AnimalListScreen';
+import AddFarmScreen from '../screens/AddFarmScreen';
+// import AddAnimalScreen from '../screens/AddAnimalScreen'; // Adicionar se implementado
 import { theme } from '../theme';
 
-const Tab = createBottomTabNavigator();
+// Definir interface de rotas
+export type RootTabParamList = {
+  Home: undefined;
+  Farms: undefined;
+  Animals: undefined;
+  AddFarm: undefined;
+  AddAnimal: undefined;
+};
+
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export default function AppNavigator() {
   return (
     <NavigationContainer>
       <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName: string = 'help';
-            if (route.name === 'Home') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'Farms') {
-              iconName = 'warehouse';
-            }
-            return <Icon name={iconName} size={size} color={color} />;
-          },
+        screenOptions={{
           tabBarActiveTintColor: theme.colors.primary,
-          tabBarInactiveTintColor: theme.colors.textSecondary,
+          tabBarInactiveTintColor: theme.colors.text,
           tabBarStyle: {
             backgroundColor: theme.colors.card,
-            borderTopColor: theme.colors.background,
-            paddingBottom: theme.spacing.sm,
-            height: 60,
           },
-          headerShown: false,
-        })}
+        }}
       >
-        <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Início' }} />
-        <Tab.Screen name="Farms" component={FarmListScreen} options={{ title: 'Fazendas' }} />
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            tabBarLabel: 'Início',
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="home" color={color} size={size} />
+            ),
+            headerShown: false,
+          }}
+        />
+        <Tab.Screen
+          name="Farms"
+          component={FarmListScreen}
+          options={{
+            tabBarLabel: 'Fazendas',
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="warehouse" color={color} size={size} />
+            ),
+            headerShown: false,
+          }}
+        />
+        <Tab.Screen
+          name="Animals"
+          component={AnimalListScreen}
+          options={{
+            tabBarLabel: 'Animais',
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="cow" color={color} size={size} />
+            ),
+            headerShown: false,
+          }}
+        />
+        <Tab.Screen
+          name="AddFarm"
+          component={AddFarmScreen}
+          options={{
+            tabBarButton: () => null,
+            headerShown: false,
+          }}
+        />
+        {/* <Tab.Screen
+          name="AddAnimal"
+          component={AddAnimalScreen} // Substituir placeholder
+          options={{
+            tabBarButton: () => null,
+            headerShown: false,
+          }}
+        /> */}
       </Tab.Navigator>
     </NavigationContainer>
   );

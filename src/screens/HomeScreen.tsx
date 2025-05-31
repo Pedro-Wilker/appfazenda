@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import WeatherCard from '../components/WeatherCard';
+import MilkProductionCard from '../components/MilkProductionCard'; // Novo
 import ChartCard from '../components/ChartCard';
 import { Weather } from '../types';
 import { theme } from '../theme';
@@ -12,6 +13,13 @@ const mockWeather: Weather[] = [
   { day: 'Quinta', temperature: 24, condition: 'Parcialmente nublado', precipitation: 2 },
   { day: 'Sexta', temperature: 26, condition: 'Ensolarado', precipitation: 0 },
 ];
+
+const mockMilkProduction = {
+  daily: 120, // Litros/dia
+  monthly: 3150, // Litros/mês
+  earnings: 7500, // Ganhos (R$)
+  costs: 4500, // Custos (R$)
+};
 
 const mockExpenseData = {
   labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'],
@@ -42,6 +50,12 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <WeatherCard weatherData={mockWeather} />
+        <MilkProductionCard
+          dailyProduction={mockMilkProduction.daily}
+          monthlyProduction={mockMilkProduction.monthly}
+          earnings={mockMilkProduction.earnings}
+          costs={mockMilkProduction.costs}
+        />
         <ChartCard title="Gastos Semanais" chartType="bar" data={mockExpenseData} chartConfig={defaultChartConfig} />
         <ChartCard title="Produção de Leite" chartType="line" data={mockMilkProductionData} chartConfig={defaultChartConfig} />
         <ChartCard title="Balanço Mensal" chartType="pie" data={mockBalanceData} chartConfig={defaultChartConfig} />

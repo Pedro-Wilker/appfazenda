@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, SafeAreaView } from 'react-native';
 import { theme } from '../theme';
 
 export default function FarmListScreen() {

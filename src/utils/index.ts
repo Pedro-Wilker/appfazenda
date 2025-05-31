@@ -1,7 +1,21 @@
-export const formatDate = (date: Date): string => {
-  return date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
+import { registerRootComponent } from 'expo';
+import App from '../App'; 
+
+declare global {
+  interface SVGElement {
+    transformOrigin: string;
+  }
+}
+
+if (typeof SVGElement.prototype.transformOrigin === 'undefined') {
+  Object.defineProperty(SVGElement.prototype, 'transformOrigin', {
+    get() {
+      return this.getAttribute('transform-origin') || '0 0';
+    },
+    set(value: string) {
+      this.setAttribute('transform-origin', value);
+    },
   });
-};
+}
+
+registerRootComponent(App);

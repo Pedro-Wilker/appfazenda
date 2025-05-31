@@ -1,24 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
-import { BarChart, LineChart, PieChart } from 'react-native-chart-kit';
+import { StyleSheet, Text, View } from 'react-native';
+import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
+import { LinearGradient } from 'expo-linear-gradient'; // Usando expo-linear-gradient
 import { theme } from '../theme';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 
-// Define ChartConfig type
 interface ChartConfig {
-  backgroundColor: string;
-  backgroundGradientFrom: string;
-  backgroundGradientTo: string;
-  decimalPlaces?: number;
-  color: (opacity?: number) => string;
+  backgroundColor?: string;
+  color?: (opacity?: number) => string;
   labelColor?: (opacity?: number) => string;
-  style?: object;
-  propsForDots?: object;
-  propsForBackgroundLines?: object;
-  propsForLabels?: object;
 }
 
-// Define chart data types
 interface BarChartData {
   labels: string[];
   datasets: Array<{ data: number[] }>;
@@ -49,70 +42,122 @@ interface ChartCardProps {
   chartConfig: ChartConfig;
 }
 
-const chartWidth = wp('90%'); // 90% of screen width
+const chartWidth = wp('92%');
 
 export default function ChartCard({ title, chartType, data, chartConfig }: ChartCardProps) {
+  const barData = chartType === 'bar' ? (data as BarChartData).datasets[0].data.map((value, index) => ({
+    value,
+    label: (data as BarChartData).labels[index],
+  })) : [];
+
+  const lineData = chartType === 'line'
+    ? (data as LineChartData).datasets[0].data.map((value, index) => ({
+        value,
+        label: (data as LineChartData).labels[index],
+        color: (data as LineChartData).datasets[0].color
+          ? (data as LineChartData).datasets[0].color!(1)
+          : chartConfig.color
+          ? chartConfig.color(1)
+          : 'rgba(46, 125, 50, 1)',
+      }))
+    : [];
+
+  const pieData = chartType === 'pie' ? (data as PieChartData).map((item) => ({
+    value: item.value,
+    text: item.name,
+    color: item.color,
+  })) : [];
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      {chartType === 'bar' && (
-        <BarChart
-          data={data as BarChartData}
-          width={chartWidth}
-          height={220}
-          yAxisLabel="R$"
-          yAxisSuffix=""
-          chartConfig={{ ...chartConfig, propsForLabels: { fontSize: 10 } }}
-          style={styles.chart}
-          verticalLabelRotation={30}
-        />
-      )}
-      {chartType === 'line' && (
-        <LineChart
-          data={data as LineChartData}
-          width={chartWidth}
-          height={220}
-          yAxisLabel=""
-          yAxisSuffix="L"
-          chartConfig={{ ...chartConfig, propsForLabels: { fontSize: 10 } }}
-          style={styles.chart}
-          bezier
-        />
-      )}
-      {chartType === 'pie' && (
-        <PieChart
-          data={data as PieChartData}
-          width={chartWidth}
-          height={220}
-          chartConfig={chartConfig}
-          accessor="value"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          style={styles.chart}
-        />
-      )}
-    </View>
+    <Animated.View entering={FadeInUp.duration(500)} style={styles.container}>
+      <LinearGradient
+        colors={[theme.colors.gradientStart, theme.colors.gradientEnd]}
+        style={styles.header}
+      >
+        <Text style={styles.title}>{title}</Text>
+      </LinearGradient>
+      <View style={[styles.chartWrapper, chartType === 'bar' && styles.barChartWrapper, chartType === 'line' && styles.lineChartWrapper, chartType === 'pie' && styles.pieChartWrapper]}>
+        {chartType === 'bar' && (
+          <BarChart
+            data={barData}
+            width={chartWidth}
+            height={200}
+            barWidth={20}
+            spacing={10}
+            yAxisTextStyle={{ fontSize: 8, color: theme.colors.text }}
+            xAxisLabelTextStyle={{ fontSize: 8, color: theme.colors.text }}
+            frontColor={theme.colors.primary}
+            yAxisLabelPrefix="R$"
+            showFractionalValues={false}
+            noOfSections={5}
+            rotateLabel
+          />
+        )}
+        {chartType === 'line' && (
+          <LineChart
+            data={lineData}
+            width={chartWidth}
+            height={200}
+            yAxisTextStyle={{ fontSize: 8, color: theme.colors.text }}
+            xAxisLabelTextStyle={{ fontSize: 8, color: theme.colors.text }}
+            yAxisLabelSuffix="L"
+            noOfSections={5}
+            curved
+            thickness={2}
+          />
+        )}
+        {chartType === 'pie' && (
+          <PieChart
+            data={pieData}
+            donut
+            textColor={theme.colors.text}
+            textSize={10}
+            radius={80}
+            innerRadius={50}
+            focusOnPress
+            centerLabelComponent={() => (
+              <Text style={{ fontSize: 10, color: theme.colors.text }}>Balanço</Text>
+            )}
+          />
+        )}
+      </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: theme.spacing.md,
+    margin: theme.spacing.sm,
     backgroundColor: theme.colors.card,
     borderRadius: theme.borderRadius.medium,
-    margin: theme.spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.15)',
+    elevation: 4,
+    overflow: 'hidden',
+  },
+  header: {
+    padding: theme.spacing.sm,
+    borderTopLeftRadius: theme.borderRadius.medium,
+    borderTopRightRadius: theme.borderRadius.medium,
   },
   title: {
     ...theme.typography.title,
-    color: theme.colors.primary,
-    marginBottom: theme.spacing.sm,
+    color: '#fff',
   },
-  chart: {
+  chartWrapper: {
+    alignItems: 'center',
+    padding: theme.spacing.sm,
+    pointerEvents: 'none',
+  },
+  barChartWrapper: {
     borderRadius: theme.borderRadius.small,
+    overflow: 'hidden',
+  },
+  lineChartWrapper: {
+    borderRadius: theme.borderRadius.small,
+    overflow: 'hidden',
+  },
+  pieChartWrapper: {
+    borderRadius: theme.borderRadius.small,
+    overflow: 'hidden',
   },
 });

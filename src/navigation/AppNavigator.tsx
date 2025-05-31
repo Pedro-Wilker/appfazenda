@@ -14,11 +14,11 @@ export default function AppNavigator() {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName: string = 'help-circle-outline';
+            let iconName: string = 'help';
             if (route.name === 'Home') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Farms') {
-              iconName = focused ? 'barn' : 'barn-outline';
+              iconName = 'warehouse';
             }
             return <Icon name={iconName} size={size} color={color} />;
           },

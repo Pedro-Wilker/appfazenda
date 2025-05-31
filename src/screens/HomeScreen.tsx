@@ -1,12 +1,10 @@
 import React from 'react';
-import { StyleSheet, ScrollView, SafeAreaView, Text, View } from 'react-native';
+import { StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import WeatherCard from '../components/WeatherCard';
 import ChartCard from '../components/ChartCard';
-import Button from '../components/Button';
 import { Weather } from '../types';
 import { theme } from '../theme';
 
-// Mock data
 const mockWeather: Weather[] = [
   { day: 'Hoje', temperature: 25, condition: 'Ensolarado', precipitation: 0 },
   { day: 'Terça', temperature: 23, condition: 'Nublado', precipitation: 5 },
@@ -29,39 +27,24 @@ const mockMilkProductionData = {
 };
 
 const mockBalanceData = [
-  { name: 'Ganhos', value: 5000, color: theme.colors.primary, legendFontColor: theme.colors.text, legendFontSize: 12 },
-  { name: 'Gastos', value: 3000, color: theme.colors.accent, legendFontColor: theme.colors.text, legendFontSize: 12 },
+  { name: 'Ganhos', value: 5000, color: theme.colors.primary, legendFontColor: theme.colors.text, legendFontSize: 10 },
+  { name: 'Gastos', value: 3000, color: theme.colors.accent, legendFontColor: theme.colors.text, legendFontSize: 10 },
 ];
 
-const chartConfig = {
+const defaultChartConfig = {
   backgroundColor: theme.colors.card,
-  backgroundGradientFrom: theme.colors.card,
-  backgroundGradientTo: theme.colors.card,
-  decimalPlaces: 0,
   color: (opacity = 1) => `rgba(46, 125, 50, ${opacity})`,
   labelColor: (opacity = 1) => theme.colors.text,
-  style: {
-    borderRadius: theme.borderRadius.small,
-  },
-  propsForDots: {
-    r: '6',
-    strokeWidth: '2',
-    stroke: theme.colors.secondary,
-  },
 };
 
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Bem-vindo à sua fazenda</Text>
-          <Button title="Ver Fazendas" onPress={() => {}} style={styles.headerButton} />
-        </View>
         <WeatherCard weatherData={mockWeather} />
-        <ChartCard title="Gastos Semanais" chartType="bar" data={mockExpenseData} chartConfig={chartConfig} />
-        <ChartCard title="Produção de Leite" chartType="line" data={mockMilkProductionData} chartConfig={chartConfig} />
-        <ChartCard title="Balanço Mensal" chartType="pie" data={mockBalanceData} chartConfig={chartConfig} />
+        <ChartCard title="Gastos Semanais" chartType="bar" data={mockExpenseData} chartConfig={defaultChartConfig} />
+        <ChartCard title="Produção de Leite" chartType="line" data={mockMilkProductionData} chartConfig={defaultChartConfig} />
+        <ChartCard title="Balanço Mensal" chartType="pie" data={mockBalanceData} chartConfig={defaultChartConfig} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -73,21 +56,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   scrollContent: {
+    paddingVertical: theme.spacing.sm,
     paddingBottom: theme.spacing.xl,
-  },
-  header: {
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.primary,
-    borderBottomLeftRadius: theme.borderRadius.medium,
-    borderBottomRightRadius: theme.borderRadius.medium,
-    marginBottom: theme.spacing.sm,
-  },
-  headerTitle: {
-    ...theme.typography.title,
-    color: '#fff',
-    marginBottom: theme.spacing.sm,
-  },
-  headerButton: {
-    alignSelf: 'flex-start',
   },
 });

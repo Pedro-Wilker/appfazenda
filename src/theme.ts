@@ -1,12 +1,14 @@
 export const theme = {
   colors: {
-    primary: '#2e7d32', // Green
-    secondary: '#8d6e63', // Brown
-    accent: '#d81b60', // Pink for precipitation
-    background: '#f5f5f5', // Beige
-    card: '#ffffff', // White
-    text: '#333333', // Dark gray
-    textSecondary: '#555555', // Lighter gray
+    primary: '#2e7d32',
+    secondary: '#8d6e63',
+    accent: '#d81b60',
+    background: '#f5f5f5',
+    card: '#ffffff',
+    text: '#333333',
+    textSecondary: '#555555',
+    gradientStart: '#4caf50',
+    gradientEnd: '#2e7d32',
   },
   spacing: {
     xs: 4,
@@ -17,15 +19,15 @@ export const theme = {
   },
   typography: {
     title: {
-      fontSize: 20,
+      fontSize: 18,
       fontWeight: 'bold' as 'bold',
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: '600' as '600',
     },
     body: {
-      fontSize: 14,
+      fontSize: 12,
     },
   },
   borderRadius: {

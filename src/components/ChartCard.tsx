@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
-import { LinearGradient } from 'expo-linear-gradient'; // Usando expo-linear-gradient
+import { LinearGradient } from 'expo-linear-gradient';
 import { theme } from '../theme';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Animated, { FadeInUp } from 'react-native-reanimated';
@@ -114,10 +114,10 @@ export default function ChartCard({ title, chartType, data, chartConfig }: Chart
             textSize={10}
             radius={80}
             innerRadius={50}
-            focusOnPress
+            focusOnPress={false} // Desativado para evitar erros de manipuladores de eventos
             centerLabelComponent={() => (
-              <Text style={{ fontSize: 10, color: theme.colors.text }}>Balanço</Text>
-            )}
+                <Text style={{ fontSize: 10, color: theme.colors.text }}>Balanço</Text>
+              )}
           />
         )}
       </View>
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   chartWrapper: {
     alignItems: 'center',
     padding: theme.spacing.sm,
-    pointerEvents: 'none',
+    // Removido pointerEvents: 'none' para permitir eventos de toque
   },
   barChartWrapper: {
     borderRadius: theme.borderRadius.small,

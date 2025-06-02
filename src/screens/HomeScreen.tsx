@@ -1,11 +1,17 @@
 import React from 'react';
-import { StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, ScrollView, SafeAreaView, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import WeatherCard from '../components/WeatherCard';
 import MilkProductionCard from '../components/MilkProductionCard';
 import ChartCard from '../components/ChartCard';
+import Button from '../components/Button';
 import { useFarmContext } from '../contexts/FarmContext';
 import { Weather, PieChartData } from '../types';
 import { theme } from '../theme';
+import { RootStackParamList } from '../navigation/AppNavigator';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface ProductionData {
   daily: number;
@@ -97,6 +103,7 @@ const defaultChartConfig = {
 
 export default function HomeScreen() {
   const { selectedFarm } = useFarmContext();
+  const navigation = useNavigation<NavigationProp>();
   const farmType: 'milk' | 'eggs' = selectedFarm?.type || 'milk';
 
   return (
@@ -140,5 +147,19 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingVertical: theme.spacing.sm,
     paddingBottom: theme.spacing.xl,
+  },
+  title: {
+    ...theme.typography.title,
+    color: theme.colors.primary,
+    textAlign: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    marginBottom: theme.spacing.lg,
+  },
+  button: {
+    width: '80%',
+    marginVertical: theme.spacing.xs,
   },
 });

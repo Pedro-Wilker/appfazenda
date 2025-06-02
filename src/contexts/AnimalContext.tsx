@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface Animal {
+export interface Animal {
   id: string;
   name: string;
   species: 'cattle' | 'chicken' | 'pig';

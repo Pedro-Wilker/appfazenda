@@ -47,7 +47,6 @@ export default function FarmListScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Selecionar Fazenda</Text>
       <FlatList
         data={farms}
         renderItem={renderFarm}

@@ -4,22 +4,22 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomeScreen from '../screens/HomeScreen';
 import AnimalTypesScreen from '../screens/AnimalTypesScreen';
-import AddAnimalScreen from '../screens/AddAnimalScreen';
 import FarmListScreen from '../screens/FarmListScreen';
 import AddFarmScreen from '../screens/AddFarmScreen';
 import AnimalListScreen from '../screens/AnimalListScreen';
 import AnimalDetailsScreen from '../screens/AnimalDetailsScreen';
+import AddAnimalScreen from '../screens/AddAnimalScreen';
 import { theme } from '../theme';
 
 export type RootStackParamList = {
   Tabs: undefined;
   Home: undefined;
   AnimalTypes: undefined;
-  AddAnimal: undefined;
   FarmList: undefined;
   AddFarm: undefined;
   AnimalList: { species: 'cattle' | 'chicken' | 'pig' };
   AnimalDetails: { animalId: string };
+  AddAnimal: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -34,7 +34,7 @@ function TabsNavigator() {
         tabBarInactiveTintColor: theme.colors.textSecondary,
         tabBarStyle: {
           backgroundColor: theme.colors.card,
-          borderTopColor: theme.colors.card, // or another valid color property, e.g., theme.colors.primary
+          borderTopColor: theme.colors.card,
           paddingBottom: 5,
           height: 60,
         },
@@ -64,19 +64,9 @@ function TabsNavigator() {
         name="AnimalTypes"
         component={AnimalTypesScreen}
         options={{
-          tabBarLabel: 'Tipos de Animais',
+          tabBarLabel: 'Animais',
           tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Icon name="paw" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="AddAnimal"
-        component={AddAnimalScreen}
-        options={{
-          tabBarLabel: 'Adicionar Animal',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Icon name="plus-circle" color={color} size={size} />
           ),
         }}
       />
@@ -113,6 +103,11 @@ export default function AppNavigator() {
         name="AnimalDetails"
         component={AnimalDetailsScreen}
         options={{ title: 'Detalhes do Animal' }}
+      />
+      <Stack.Screen
+        name="AddAnimal"
+        component={AddAnimalScreen}
+        options={{ title: 'Adicionar Animal' }}
       />
     </Stack.Navigator>
   );

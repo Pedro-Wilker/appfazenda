@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { LinearGradient } from 'expo-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFarmContext } from '../contexts/FarmContext';
 import { useAnimalContext } from '../contexts/AnimalContext';
 import { theme } from '../theme';
@@ -46,7 +47,6 @@ export default function AddAnimalScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Adicionar Animal</Text>
       <View style={styles.form}>
         <Text style={styles.label}>Nome do Animal</Text>
         <TextInput
@@ -122,10 +122,18 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
     padding: theme.spacing.sm,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.sm,
+  },
+  backButton: {
+    padding: theme.spacing.sm,
+  },
   title: {
     ...theme.typography.title,
     color: theme.colors.primary,
-    margin: theme.spacing.sm,
+    flex: 1,
     textAlign: 'center',
   },
   form: {

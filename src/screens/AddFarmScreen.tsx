@@ -2,16 +2,21 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { LinearGradient } from 'expo-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFarmContext } from '../contexts/FarmContext';
 import { theme } from '../theme';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
 import { Farm } from '../types';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function AddFarmScreen() {
   const { addFarm } = useFarmContext();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [type, setType] = useState<'milk' | 'eggs'>('milk');
@@ -35,7 +40,6 @@ export default function AddFarmScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Criar Nova Fazenda</Text>
       <View style={styles.form}>
         <Text style={styles.label}>Nome da Fazenda</Text>
         <TextInput
@@ -81,10 +85,18 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
     padding: theme.spacing.sm,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.sm,
+  },
+  backButton: {
+    padding: theme.spacing.sm,
+  },
   title: {
     ...theme.typography.title,
     color: theme.colors.primary,
-    margin: theme.spacing.sm,
+    flex: 1,
     textAlign: 'center',
   },
   form: {

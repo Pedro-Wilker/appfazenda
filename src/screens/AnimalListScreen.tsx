@@ -10,12 +10,7 @@ import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Animated, { FadeInRight } from 'react-native-reanimated';
 import { useNavigation, useRoute, RouteProp as NavigationRouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-type RootStackParamList = {
-  AnimalList: { species: 'cattle' | 'chicken' | 'pig' };
-  AnimalDetails: { animalId: string };
-  AddAnimal: undefined;
-};
+import { RootStackParamList } from '../navigation/AppNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type AnimalListRouteProp = NavigationRouteProp<RootStackParamList, 'AnimalList'>;

@@ -9,6 +9,7 @@ import AddFarmScreen from '../screens/AddFarmScreen';
 import AnimalListScreen from '../screens/AnimalListScreen';
 import AnimalDetailsScreen from '../screens/AnimalDetailsScreen';
 import AddAnimalScreen from '../screens/AddAnimalScreen';
+import ReportScreen from '../screens/ReportScreen';
 import { theme } from '../theme';
 
 export type RootStackParamList = {
@@ -20,6 +21,7 @@ export type RootStackParamList = {
   AnimalList: { species: 'cattle' | 'chicken' | 'pig' };
   AnimalDetails: { animalId: string };
   AddAnimal: undefined;
+  Report: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -70,6 +72,16 @@ function TabsNavigator() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="Report"
+        component={ReportScreen}
+        options={{
+          tabBarLabel: 'Relatórios',
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <Icon name="file-document" color={color} size={size} />
+          ),
+        }}
+      />
     </Tabs.Navigator>
   );
 }
@@ -81,7 +93,10 @@ export default function AppNavigator() {
       screenOptions={{
         headerStyle: { backgroundColor: theme.colors.primary },
         headerTintColor: '#fff',
-        headerTitleStyle: theme.typography.title,
+        headerTitleStyle: {
+          ...theme.typography.title,
+          fontWeight: 'bold', // or a valid value like '700'
+        },
       }}
     >
       <Stack.Screen

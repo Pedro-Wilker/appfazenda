@@ -6,20 +6,11 @@ import { useFarmContext } from '../contexts/FarmContext';
 import { useAnimalContext } from '../contexts/AnimalContext';
 import { theme } from '../theme';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
-import { Document, Page, Text as PDFText, View as PDFView, StyleSheet as PDFStyleSheet, pdf } from '@react-pdf/renderer';
 import { mockFarmData, mockAnimals } from '../mocks/reportData';
 import { ReportFilters, MonthlyFarmData, Animal } from '../types';
-
-// Estilos para o PDF
-const pdfStyles = PDFStyleSheet.create({
-  page: { padding: 30, fontSize: 12 },
-  title: { fontSize: 16, marginBottom: 10, fontWeight: 'bold' },
-  subtitle: { fontSize: 14, marginTop: 10, marginBottom: 5 },
-  text: { marginBottom: 5 },
-  listItem: { marginLeft: 10, marginBottom: 3 },
-});
 
 export default function ReportScreen() {
   const { selectedFarm } = useFarmContext();
@@ -31,12 +22,11 @@ export default function ReportScreen() {
     animalId: undefined,
   });
 
-  const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i); // Últimos 5 anos
+  const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 
   const generateGeneralReport = async (data: MonthlyFarmData[], animals: Animal[]) => {
     let content = `Relatório Geral - ${selectedFarm?.name}\nPeríodo: ${filters.period === 'monthly' ? `Mês ${filters.year}` : `Ano ${filters.year}`}\n\n`;
 
-    // Resumo Financeiro
     content += 'Resumo Financeiro\n';
     let totalEarnings = 0;
     let totalExpenses = 0;
@@ -55,7 +45,6 @@ export default function ReportScreen() {
     });
     content += `Total Ganhos: R$${totalEarnings}\nTotal Gastos: R$${totalExpenses}\n\n`;
 
-    // Relatório por Animal
     content += 'Relatório por Animal\n';
     animals.forEach((animal) => {
       content += `Animal: ${animal.name} (${animal.identificationNumber})\n`;
@@ -210,40 +199,32 @@ export default function ReportScreen() {
     }
 
     try {
-      const pdfContent = (
-        <Document>
-          <Page style={pdfStyles.page}>
-            <PDFText style={pdfStyles.title}>
-              {filters.type === 'general' && `Relatório Geral - ${selectedFarm.name}`}
-              {filters.type === 'precipitation' && `Relatório de Precipitação - ${selectedFarm.name}`}
-              {filters.type === 'animals_general' && `Relatório Geral de Animais - ${selectedFarm.name}`}
-              {filters.type === 'animal_specific' && `Relatório de Animal`}
-            </PDFText>
-            <PDFText style={pdfStyles.text}>
-              Período: {filters.period === 'monthly' ? `Mês ${filters.year}` : `Ano ${filters.year}`}
-            </PDFText>
-            <PDFText style={pdfStyles.text}>{content}</PDFText>
-          </Page>
-        </Document>
-      );
+      const htmlContent = `
+        <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              h1 { font-size: 18px; }
+              p { font-size: 14px; white-space: pre-wrap; }
+            </style>
+          </head>
+          <body>
+            <h1>
+              ${filters.type === 'general' ? `Relatório Geral - ${selectedFarm.name}` : ''}
+              ${filters.type === 'precipitation' ? `Relatório de Precipitação - ${selectedFarm.name}` : ''}
+              ${filters.type === 'animals_general' ? `Relatório Geral de Animais - ${selectedFarm.name}` : ''}
+              ${filters.type === 'animal_specific' ? `Relatório de Animal` : ''}
+            </h1>
+            <p>Período: ${filters.period === 'monthly' ? `Mês ${filters.year}` : `Ano ${filters.year}`}</p>
+            <p>${content.replace(/\n/g, '<br>')}</p>
+          </body>
+        </html>
+      `;
 
       const pdfUri = `${FileSystem.cacheDirectory}relatorio_${filters.type}_${filters.year}.pdf`;
-      
-      // Renderizar o PDF como blob
-      const pdfBlob = await pdf(pdfContent).toBlob();
-      
-      // Converter blob para base64
-      const reader = new FileReader();
-      reader.readAsDataURL(pdfBlob);
-      const base64Data = await new Promise<string>((resolve) => {
-        reader.onload = () => resolve(reader.result?.toString().split(',')[1] || '');
-      });
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
 
-      // Escrever o arquivo PDF
-      await FileSystem.writeAsStringAsync(pdfUri, base64Data, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
+      await FileSystem.moveAsync({ from: uri, to: pdfUri });
       Alert.alert('Sucesso', `PDF gerado em: ${pdfUri}`);
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(pdfUri);

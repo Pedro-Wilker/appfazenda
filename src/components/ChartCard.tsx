@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Platform } from 'react-native'; // Adicione Platform
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
 import { LinearGradient } from 'expo-linear-gradient';
 import { theme } from '../theme';
@@ -114,10 +114,11 @@ export default function ChartCard({ title, chartType, data, chartConfig }: Chart
             textSize={10}
             radius={80}
             innerRadius={50}
-            focusOnPress={false} // Desativado para evitar erros de manipuladores de eventos
+            focusOnPress={Platform.OS !== 'web' ? true : false} // Desativa interatividade no web
+            isAnimated={Platform.OS !== 'web'} // Desativa animações no web
             centerLabelComponent={() => (
-                <Text style={{ fontSize: 10, color: theme.colors.text }}>Balanço</Text>
-              )}
+              <Text style={{ fontSize: 10, color: theme.colors.text }}>Balanço</Text>
+            )}
           />
         )}
       </View>
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     margin: theme.spacing.sm,
     backgroundColor: theme.colors.card,
     borderRadius: theme.borderRadius.medium,
-    boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.15)',
+    boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.15)', // Já corrigido
     elevation: 4,
     overflow: 'hidden',
   },
@@ -146,7 +147,6 @@ const styles = StyleSheet.create({
   chartWrapper: {
     alignItems: 'center',
     padding: theme.spacing.sm,
-    // Removido pointerEvents: 'none' para permitir eventos de toque
   },
   barChartWrapper: {
     borderRadius: theme.borderRadius.small,

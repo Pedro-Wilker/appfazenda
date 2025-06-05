@@ -163,12 +163,18 @@ export default function ReportScreen() {
   };
 
   const generatePDF = async () => {
+    console.log('Iniciando generatePDF');
+    console.log('selectedFarm:', selectedFarm);
+    console.log('filters:', filters);
+
     if (!selectedFarm) {
+      console.log('Erro: selectedFarm é undefined');
       Alert.alert('Erro', 'Selecione uma fazenda antes de gerar o relatório.');
       return;
     }
 
     if (filters.type === 'animal_specific' && !filters.animalId) {
+      console.log('Erro: animalId é undefined');
       Alert.alert('Erro', 'Selecione um animal para o relatório específico.');
       return;
     }
@@ -176,29 +182,38 @@ export default function ReportScreen() {
     let content = '';
     const farmData = mockFarmData;
     const animalsData = mockAnimals;
-
-    switch (filters.type) {
-      case 'general':
-        content = await generateGeneralReport(farmData, animalsData);
-        break;
-      case 'precipitation':
-        content = await generatePrecipitationReport(farmData);
-        break;
-      case 'animals_general':
-        content = await generateAnimalsGeneralReport(animalsData);
-        break;
-      case 'animal_specific':
-        const animal = animalsData.find((a) => a.id === filters.animalId);
-        if (animal) {
-          content = await generateAnimalSpecificReport(animal);
-        } else {
-          Alert.alert('Erro', 'Animal não encontrado.');
-          return;
-        }
-        break;
-    }
+    console.log('farmData:', farmData);
+    console.log('animalsData:', animalsData);
 
     try {
+      switch (filters.type) {
+        case 'general':
+          console.log('Gerando relatório geral');
+          content = await generateGeneralReport(farmData, animalsData);
+          break;
+        case 'precipitation':
+          console.log('Gerando relatório de precipitação');
+          content = await generatePrecipitationReport(farmData);
+          break;
+        case 'animals_general':
+          console.log('Gerando relatório geral de animais');
+          content = await generateAnimalsGeneralReport(animalsData);
+          break;
+        case 'animal_specific':
+          console.log('Gerando relatório específico de animal');
+          const animal = animalsData.find((a) => a.id === filters.animalId);
+          if (animal) {
+            content = await generateAnimalSpecificReport(animal);
+          } else {
+            console.log('Erro: Animal não encontrado');
+            Alert.alert('Erro', 'Animal não encontrado.');
+            return;
+          }
+          break;
+      }
+
+      console.log('Conteúdo gerado:', content);
+
       const htmlContent = `
         <html>
           <head>
@@ -221,19 +236,32 @@ export default function ReportScreen() {
         </html>
       `;
 
+      console.log('HTML gerado:', htmlContent);
+
       const pdfUri = `${FileSystem.cacheDirectory}relatorio_${filters.type}_${filters.year}.pdf`;
+      console.log('pdfUri:', pdfUri);
+
       const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      console.log('URI do PDF gerado:', uri);
 
       await FileSystem.moveAsync({ from: uri, to: pdfUri });
+      console.log('PDF movido para:', pdfUri);
+
       Alert.alert('Sucesso', `PDF gerado em: ${pdfUri}`);
       if (await Sharing.isAvailableAsync()) {
+        console.log('Compartilhando PDF');
         await Sharing.shareAsync(pdfUri);
       } else {
+        console.log('Compartilhamento não disponível');
         Alert.alert('Erro', 'Compartilhamento não disponível nesta plataforma.');
       }
-    } catch (error) {
+    } catch (error: unknown) { // Corrigido: Tipa error como unknown
       console.error('Erro ao gerar PDF:', error);
-      Alert.alert('Erro', 'Falha ao gerar o PDF.');
+      if (error instanceof Error) {
+        Alert.alert('Erro', `Falha ao gerar o PDF: ${error.message}`);
+      } else {
+        Alert.alert('Erro', 'Falha ao gerar o PDF.');
+      }
     }
   };
 
@@ -337,10 +365,7 @@ const styles = StyleSheet.create({
   pickerContainer: {
     backgroundColor: theme.colors.card,
     borderRadius: theme.borderRadius.medium,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    boxShadow: '0px 1px 4px rgba(0, 0, 0, 0.1)', // Corrigido: Substitui shadow*
     elevation: 2,
   },
   picker: {

@@ -10,6 +10,7 @@ import { useFarmContext } from '../contexts/FarmContext';
 import { Weather, PieChartData } from '../types';
 import { theme } from '../theme';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -116,24 +117,33 @@ export default function HomeScreen() {
           earnings={mockMilkProduction[farmType].earnings}
           costs={mockMilkProduction[farmType].costs}
         />
-        <ChartCard
-          title="Gastos Semanais"
-          chartType="bar"
-          data={mockExpenseData[farmType]}
-          chartConfig={defaultChartConfig}
-        />
-        <ChartCard
-          title={farmType === 'milk' ? 'Produção de Leite' : 'Produção de Ovos'}
-          chartType="line"
-          data={mockMilkProductionData[farmType]}
-          chartConfig={defaultChartConfig}
-        />
-        <ChartCard
-          title="Balanço Mensal"
-          chartType="pie"
-          data={mockBalanceData[farmType]}
-          chartConfig={defaultChartConfig}
-        />
+        <ErrorBoundary>
+
+          <ChartCard
+            title="Gastos Semanais"
+            chartType="bar"
+            data={mockExpenseData[farmType]}
+            chartConfig={defaultChartConfig}
+          />
+        </ErrorBoundary>
+        <ErrorBoundary>
+
+          <ChartCard
+            title={farmType === 'milk' ? 'Produção de Leite' : 'Produção de Ovos'}
+            chartType="line"
+            data={mockMilkProductionData[farmType]}
+            chartConfig={defaultChartConfig}
+          />
+        </ErrorBoundary>
+        <ErrorBoundary>
+
+          <ChartCard
+            title="Balanço Mensal"
+            chartType="pie"
+            data={mockBalanceData[farmType]}
+            chartConfig={defaultChartConfig}
+          />
+        </ErrorBoundary>
       </ScrollView>
     </SafeAreaView>
   );
